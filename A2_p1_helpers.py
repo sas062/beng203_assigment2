@@ -211,3 +211,31 @@ def bin_expression_count(bin_spans, gene_expr):
             if ov > 0:
                 total += val * (ov / (bg_e - bg_s))  # proportional share of the 50bp bedgraph bin
     return total
+
+# Part (d) helper functions
+
+# Part (d) helper functions
+
+def load_noncoding_intervals(gencode_csv):
+    intervals = []
+    with open(gencode_csv) as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            tx_start = int(row["txStart"])
+            tx_end   = int(row["txEnd"])
+            cds_start = int(row["cdsStart"])
+            cds_end   = int(row["cdsEnd"])
+            exons = split_exons(row["exonStarts"], row["exonEnds"])
+            if (cds_start >= cds_end):  # non-coding
+                intervals.append((tx_start, tx_end))
+                continue
+            # Cut out coding parts of the transcript, keep UTRs and introns
+            for i in range(len(exons) - 1):
+                intron_s = exons[i][1]    # end of exon i
+                intron_e = exons[i+1][0]  # start of exon i+1
+                if intron_e > intron_s:
+                    intervals.append((intron_s, intron_e))
+
+            intervals.append((tx_start, cds_start))
+            intervals.append((cds_end, tx_end))
+    return merge_intervals(intervals)
