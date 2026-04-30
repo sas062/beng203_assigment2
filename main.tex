@@ -103,8 +103,21 @@ The alignment target determines what kinds of matches the algorithm must recover
         {\csvcoli & \csvcolii}
     \end{center}
 
-    \item 
-    
+    \item
+    The filter was designed using a false positive rate $P_{FP}=0.01$, $m = math.ceil(-\frac{n\ln(P_{FP})}{(\ln2)^2})$ as derived in part (c), and $h = math.ceil(\frac{m}{n}\ln 2)$ as derived in part (b). Math.ceil() was used as the bloom filter needs integers for the number of bits and hash functions. Rounding up is safer than rounding down because rounding down would allocate fewer bits than the derived formula requires. That would increase the false positive rate relative to the chosen rate. The number of kmers $n$ in the aforementioned formulas was computed using the experession $n = numSequences *(sequenceLength-objectLength+1)$, where numSequences was given as $10,000$, the sequenceLength was calculated to be $101$, and objectLength was given as $25$. Hashing was done using python's mmh3.hash. For each 25-mer, multiple hash values were computed by re-hashing the same string with different seed values. Then, the hashes were mapped into the bloom filter bit array using the modulus of $m$. Each 25-mer was hashed $h$ times, and the resulting indices were set to 1 in the bit array.
+    \begin{center}
+        query1 is not human. Match fraction = 0.000\\
+        query2 is not human. Match fraction = 0.000\\
+        query3 is not human. Match fraction = 0.013\\
+        query4 is human. Match fraction = 1.000\\
+        query5 is not human. Match fraction = 0.833\\
+        query6 is not human. Match fraction = 0.584\\
+        query7 is not human. Match fraction = 0.688\\
+        query8 is not human. Match fraction = 0.558\\
+        query9 is not human. Match fraction = 0.338\\
+        query10 is not human. Match fraction = 0.857\\
+    \end{center}
+    Query 4 is human, and other queries such as Queries 5 and 10 may also be human based on the high match fraction from a limited database. Queries 1–3 are the strongest non-human candidates. Given that the queries came from a human cervical cancer cell line, these sequences are most plausibly HPV-derived, potentially including viral or virus-host fusion transcripts. This is useful because HPV integration and viral oncogene expression are key molecular features of cervical cancer.
     
 \end{enumerate}
 
